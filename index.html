@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Chat</title>
+        <style>
+            * {
+                font-family: "Poppins", sans-serif;
+                color: var(--color);
+                word-wrap: break-word;
+            } 
+            :root {
+                --bg:hsl(210,24%,7%);
+                --bg2:rgb(24, 31, 39);
+                --color: #eee;
+                --channel: rgba(222, 215, 215, 0.896);
+                --primary:#8493eb;
+                --et: #8b28dc;
+                --admin: #3F51B5;
+                --mod: #a81b1b;
+                --bot: #a81b1b;
+            }
+            body {
+                background: var(--bg2);
+                margin: 5px;
+                margin-left: 2.5%;
+                margin-right: 2.5%;
+                margin-bottom: 75px;
+            }
+            small {
+                color: var(--channel);
+                font-size: smaller;
+                font-weight: normal;
+                font-size: .7em;
+            }
+            label {
+                font-size: small;
+            }
+            .label-admin {
+                color: var(--primary);
+            }
+            .msg {
+                margin-top: 5px;
+            }
+            .msg-admin {
+                color: var(--primary);
+            }
+            .message {
+                margin-bottom: 20px;
+            }
+            .message-admin {
+                color: var(--primary);
+            }
+            input {
+                display: inline;
+                outline: none;
+            }
+            .input {
+                position: fixed;
+                display: inline;
+                bottom: 0;
+                width: 100%;
+                background-color: var(--bg2);
+                height: 70px;
+                left: 0;
+                padding-top: 2px;
+            }
+            .input * {
+                display: inline;
+            }
+            input[type=text]{
+                background-color: var(--bg);
+                padding: 10px;
+                border: 1px solid var(--bg2);
+                display: inline;
+                width: calc(100% - 55px);
+                border-radius: 5px;
+                margin-left: 2.5%;
+                margin-top: 5px;
+            }
+            input[type=submit]{
+                /*background-color: transparent;
+                display: inline;
+                color: var(--color);
+                border: none;
+                padding: 2px 20px;
+                font-weight: 200;
+                margin-left: auto;
+                margin-right: auto;
+                background: var(--et);
+                border-radius: 5px;
+                font-size: smaller;*/
+                display: none;
+            }
+            et {
+                font-size: smaller;
+                background-color: var(--et);
+                padding: 2px 5px;
+                border-radius: 5px;
+                display: inline;
+                margin-left: 3px;
+            }
+            .et-admin {
+                background: var(--admin);
+            }
+            .et-user {
+                background-color: var(--et);
+            }
+            #right {
+                display: none;
+            }
+            .img-msg {
+                max-width: 50%;
+                height: auto;
+                margin-top: 10px;
+                border-radius: 5px;
+            }
+            .bot-et {
+                background-color: var(--bot);
+            }
+            .settings {
+                margin-bottom: 5px;
+            }
+            .theme {
+                background-color: var(--et);
+                border-radius: 5px;
+                width: calc(100% - 15px);
+            }
+            .btn {
+                margin: 15px;
+                color: var(--color);
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                width: calc(100% - 15px);
+                margin-top: -10px;
+            }
+            .delete_acc {
+                background-color: var(--bot);
+            }
+            .btn:hover {
+                cursor: pointer;
+            }
+            .debug {
+                font-size: small;
+                text-align: center;
+            }
+            ul, ol {
+                list-style-type: none;
+                margin: 0;
+            }
+            .list li {
+                background-color: var(--bg2);
+                padding: 7px 15px;
+                border-radius: 5px;
+                margin-left: auto;
+                margin-top: 5px;
+            }
+            #users-list-ol {
+                margin-bottom: 10%;
+            }
+            /*PC*/
+            @media screen and (min-width: 900px) {
+                #left {
+                    max-width: 70vw;
+                    overflow-y: scroll;
+                }
+                .input {
+                    max-width: 75vw;
+                }
+                #right {
+                    position: fixed;
+                    display: initial;
+                    right: 0;
+                    width: 20vw;
+                    background-color: var(--bg);
+                    height: 100vh;
+                    top: 0;
+                    overflow-y: scroll;
+                    overflow-x: hidden;
+                }
+                #right h2{
+                    margin: 15px;
+                    margin-left: 5%;
+                }
+                .img-msg {
+                    max-width: 30%;
+                }
+            }
+            ::-webkit-scrollbar {
+                width: 20px;
+                transition: .2s;
+            }
+            ::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: var(--bg);
+                border-radius: 20px;
+                border: 6px solid transparent;
+                background-clip: content-box;
+            }
+            </style>
+    </head>
+    <body>
+        <div id="left">
+            <h2 id="channel">Chat</h2>
+            <div class="container" id="container">
+                <!-- container -->
+            </div>
+            <div class="input">
+                <form id="form-input" onsubmit="return sendMSG()">
+                <input type="text" placeholder="Start typing ..." id="text-input">
+                <input type="submit">
+                </form>
+            </div>
+        </div>
+        <div id="right">
+            <p class="debug">[In development ...]</p>
+            <div id="users-list">
+                <ul class="list">
+                    <li>user <et>tag</et></li>
+                </ul>
+                <ol class="list" id="users-list-ol"></ol>
+            </div>
+        </div>
+
+        <!--<script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>-->
+        <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-database.js"></script>
+        <script>        
+        /*// Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-database.js";*/
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjI5h51elPdRQ4MkNj60i1WohAX3WJBig",
+            authDomain: "chat-5608c.firebaseapp.com",
+            databaseURL: "https://chat-5608c-default-rtdb.firebaseio.com",
+            projectId: "chat-5608c",
+            storageBucket: "chat-5608c.appspot.com",
+            messagingSenderId: "595490012525",
+            appId: "1:595490012525:web:f9f3d883b54b687356ae64",
+            measurementId: "G-M3Y20NFCEM"
+            };
+
+            /*// Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);*/
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
+
+            const admin = 'glira';
+            var channel = 'main';
+            var user_tag;
+            var tag;
+
+            if (localStorage.getItem("username") === null) {
+            var user = window.prompt('Enter your username:')
+            localStorage.setItem("username", user);
+            }
+            else{
+            var user = localStorage.getItem("username");
+            }
+            if(localStorage.getItem("tag") === null){
+                tag = window.prompt('Customize your tag:')
+                const not_tags = ['moderator', 'official', 'owner', 'admin', null, '', ' ', undefined, NaN];
+                if(not_tags.includes(tag.toLowerCase)){
+                    alert('You cannot use these tags! Try again!')
+                }
+                else{
+                    user_tag = tag.toLowerCase();
+                    localStorage.setItem("tag", user_tag)
+                    db.ref(`users/` + user).set({
+                    tag: localStorage.getItem("tag")
+                });
+                }
+            }
+            else{
+                tag = localStorage.getItem("tag");
+            }
+            /*
+            sessionStorage.setItem("status", 'true');
+            if(sessionStorage.getItem("status") != null){
+                db.ref(`users/online/` + user).set({
+                    status: 'online'
+                });
+            }
+            */
+            document.getElementById("channel").innerHTML = `Chat / <small>${channel}</small>`;
+
+            window.onload = function(){
+                const fetch = db.ref(`${channel}/messages/`);
+                fetch.on("child_added", function (snapshot){
+                const messages = snapshot.val();
+            if(messages.type == 'img'){
+                const error_img = './img/error.jpeg';
+                const alt = "Something went wrong :(";
+                if(messages.user != admin){
+                    container.innerHTML += `
+                <div class="message">
+                    <label class="label">${messages.user}</label>
+                    <et class="bot-et">Powered by Bot</et>
+                    <br>
+                    <img class="img-msg" alt="${alt}" onerror="this.onerror=null;this.src='${error_img}'" src="${messages.url}">
+                </div>
+                `;
+                }
+                else{
+                container.innerHTML += `
+                <div class="message message-admin">
+                    <label class="label label-admin">${messages.user}</label>
+                    <et class="bot-et">Powered by Bot</et>
+                    <br>
+                    <img class="img-msg" alt="${alt}" onerror="this.onerror=null;this.src='${error_img}'" src="${messages.url}">
+                </div>
+                `;
+            }
+            window.scrollTo(0, document.body.scrollHeight);
+            }
+            else if(messages.type == 'text') {
+                if(messages.user != admin){
+                    var data;
+                    let tag_ref = db.ref('users/' + messages.user + '/tag');
+                    tag_ref.on('value', (snapshot) => {
+                        data = snapshot.val();
+                        container.innerHTML += `
+                <div class="message">
+                    <label class="label">${messages.user}</label>
+                    <et class="et-user">${data}</et>
+                    <p class="msg" id="message">${messages.message}</p>
+                </div>
+                `;
+                    })
+                }
+                else{
+                    var data;
+                    let tag_ref = db.ref('users/' + messages.user + '/tag');
+                    tag_ref.on('value', (snapshot) => {
+                        data = snapshot.val();
+                        container.innerHTML += `
+                <div class="message message-admin">
+                    <label class="label label-admin">${messages.user}</label>
+                    <et class="et-admin">Owner</et>
+                    <et class="et-admin">Admin</et>
+                    <et>${data}</et>
+                    <p class="msg msg-admin" id="message">${messages.message}</p>
+                </div>`;
+                    })
+            }}
+            window.scrollTo(0, document.body.scrollHeight);
+                });
+            }
+
+            var type;
+            function sendMSG(){
+                var id = Date.now();
+                var txt = document.getElementById('text-input').value;
+                var container = document.getElementById('container');
+                window.scrollTo(0, document.body.scrollHeight);
+                var start_txt = txt.split(" ");
+                if(!txt.startsWith('/')){
+                db.ref(`${channel}/messages/` + id).set({
+                    user: user,
+                    type: 'text',
+                    message: txt
+                });
+                }
+                else {
+                    if(start_txt[0] == '/img' && start_txt[1] != null){
+                        var url = start_txt[1];
+                        type = 'img';
+                        db.ref(`${channel}/messages/` + id).set({
+                            user: user,
+                            type: type,
+                            url: url
+                        });
+                    }
+                }
+                document.getElementById('text-input').value = "";
+                return false;
+            }
+
+            /* DEBUG */
+            var userStatusDatabaseRef = firebase.database().ref('/users/' + user);
+            var isOfflineForDatabase = {
+                state: 'offline',
+                last_changed: firebase.database.ServerValue.TIMESTAMP,
+                tag: tag
+            };
+            var isOnlineForDatabase = {
+                state: 'online',
+                last_changed: firebase.database.ServerValue.TIMESTAMP,
+                tag: tag
+            };
+            firebase.database().ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() == false) {
+                    return;
+                };
+                userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+                userStatusDatabaseRef.set(isOnlineForDatabase);
+    });
+});
+
+                    var users_ref = db.ref('users');
+                    const online_list = new Set();
+                    var online_list_array;
+                    const already_online_array = new Set();
+                    users_ref.on('value', function(snapshot) {
+                        snapshot.forEach(function(childSnapshot) {
+                        var childKey = childSnapshot.key;
+                        var childData = childSnapshot.val();
+                        console.log(childKey, childData);
+                        if(childData.state == 'online'){
+                            online_list.add(childKey);
+                        }
+                        else {
+                            online_list.delete(childKey);
+                        }
+                        online_list_array = Array.from(online_list.values());
+                        console.log(online_list_array);
+                        })
+                        });
+                        setInterval(update, 1000);
+                        function update(){
+                            document.getElementById('users-list-ol').innerHTML = `<li>${online_list_array}</li>`;
+                            /*
+                            var items = document.getElementById('users-list-ol').getElementsByTagName('li');
+                            for(let i = 0; i <= items.length - 1; i++) {
+                                console.log(items[i].innerText || items[i].textContent);
+                                already_online_array.add(items[i].innerText || items[i].textContent)
+                            }
+                            console.log(Array.from(already_online_array.values()) == online_list_array)
+                            if(Array.from(already_online_array.values()) == online_list_array){
+                                return;
+                            }
+                            else {
+                            for(let i = 0; i < online_list_array.length; i++){
+                                var node = document.createElement('li');
+                                var text = document.createTextNode(online_list_array[i]);
+                                node.appendChild(text);
+                                document.getElementById('users-list-ol').appendChild(node);
+                            }}*/
+                        }
+          </script>
+    </body>
+</html>
